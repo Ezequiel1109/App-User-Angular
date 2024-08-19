@@ -1,0 +1,17 @@
+<div class="container my-4">
+    <h3>{{title}}</h3>
+
+    <button class="btn btn-primary" (click)="setOpen()">{{open == true? 'Cerrar': 'Crear Usuario'}}</button>
+    <div class="row">
+
+        <div class="col">
+            <user-table [users]="users" (idUserEventEmitter)="removeUser($event)"
+                (selectedUserEventEmitter)="setSelectedUser($event)" />
+        </div>
+    </div>
+</div>
+@if (open) {
+    <div class="abrir-modal animacion fadeIn">
+        <user-form [user]="userSelected" (newUserEventEmitter)="addUser($event)" (openEventEmitter)="setOpen()" />
+    </div>
+}
