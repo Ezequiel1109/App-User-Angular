@@ -1,6 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
+import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { add, find, resetUser, update } from '../../store/users/users.actions';
 
 @Component({
   selector: 'user-form',
@@ -8,32 +11,45 @@ import { User } from '../../models/user';
   imports: [FormsModule],
   templateUrl: './user-form.component.html'
 })
-export class UserFormComponent {
-  @Input() user: User;
+export class UserFormComponent implements OnInit {
+  user: User;
+  errors: any = {};
 
-  @Output() openEventEmitter = new EventEmitter();
-
-  @Output() newUserEventEmitter: EventEmitter<User> = new EventEmitter();
-
-  constructor(){
+  constructor(
+    private store: Store<{users: any}>,
+    private route: ActivatedRoute) {
     this.user = new User();
+
+    this.store.select('users').subscribe(state => {
+      this.errors = state.errors;
+      this.user = { ...state.user };
+    })
   }
 
-  onSubmit(userForm: NgForm):void{
-    if (userForm.valid) {
-      this.newUserEventEmitter.emit(this.user);
-      console.log(this.user);
+  ngOnInit(): void {
+    this.store.dispatch(resetUser());
+
+    this.route.paramMap.subscribe(params => {
+      const id: number = +(params.get('id') || '0');
+
+      if (id > 0) {
+        this.store.dispatch(find({ id }))
+      }
+    });
+  }
+
+  onSubmit(userForm: NgForm): void {
+
+    if (this.user.id > 0) {
+      this.store.dispatch(update({ userUpdated: this.user }))
+    } else {
+      this.store.dispatch(add({userNew: this.user}))
     }
-    userForm.reset();
-    userForm.resetForm();
-  }
-  onClear(userForm: NgForm):void{
-    this.user = new User();
-    userForm.reset();
-    userForm.resetForm();
   }
 
-  onOpenClose(){
-    this.openEventEmitter.emit();
+  onClear(userForm: NgForm): void {
+    this.store.dispatch(resetUser());
+    userForm.reset();
+    userForm.resetForm();
   }
 }
