@@ -1,8 +1,14 @@
-<h3>{{title}}</h3>
+@if(loading){
+<div class="spinner-grow d-block" style="width: 3rem; height: 3rem;" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+}@else{
+    <h3>{{title}}</h3>
 
 @if(admin){
-    <button class="btn btn-primary my-3" [routerLink]="['/users/create']">Crear Usuario</button>
+<button class="btn btn-primary my-3" [routerLink]="['/users/create']">Crear Usuario</button>
 }
+
 
 @if (users.length == 0) {
 <div class="alert alert-warning">No hay registros en el sistema!</div>
@@ -16,8 +22,8 @@
             <th>email</th>
             <th>username</th>
             @if(admin){
-                <th>remove</th>
-                <th>update</th>
+            <th>remove</th>
+            <th>update</th>
             }
         </tr>
     </thead>
@@ -30,23 +36,21 @@
             <td> {{user.email}} </td>
             <td> {{user.username}} </td>
             @if(admin){
-                <td>
-                    <button class="btn btn-danger btn-sm"
-                    (click)="onRemoveUser(user.id)"
-                    >
-                        remove
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-info btn-sm"
-                    [routerLink]="['/users/edit', user.id]">
-                        update
-                    </button>
-                </td>
+            <td>
+                <button class="btn btn-danger btn-sm" (click)="onRemoveUser(user.id)">
+                    remove
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-info btn-sm" [routerLink]="['/users/edit', user.id]">
+                    update
+                </button>
+            </td>
             }
         </tr>
         }
     </tbody>
 </table>
 }
-<paginator [paginator]="paginator" [url]="'/users/page'"/>
+<paginator [paginator]="paginator" [url]="'/users/page'" />
+}

@@ -1,6 +1,5 @@
 import {
   ApplicationConfig,
-  provideZoneChangeDetection,
   isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -13,12 +12,11 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from './interceptors/token.interceptor';
 import { UsersEffects } from './store/users/users.effects';
 import { AuthEffects } from './store/auth/auth.effects';
-import { usersReducer } from './store/users/users.reduce';
+import { usersReducer } from './store/users/users.reducer';
 import { authReducer } from './store/auth/auth.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([tokenInterceptor])),
     provideEffects(UsersEffects, AuthEffects),

@@ -12,40 +12,41 @@ import {
   update,
   updateSuccess,
 } from './users.actions';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of, tap} from 'rxjs';
 import { User } from '../../models/user';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
 @Injectable()
-export class UsersEffects {
+export class UsersEffects { 
+  
   loadUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(load),
-      exhaustMap((action) =>
+      mergeMap((action) =>
         this.service.findAllPageable(action.page).pipe(
           map((pageable) => {
             const users = pageable.content as User[];
             const paginator = pageable;
-
             return findAllPageable({ users, paginator });
           }),
-          catchError((error) => of(error))
+          catchError((error) => of({ type: '[User API] Load Users Failure', error }))
         )
       )
     )
   );
+ 
 
   addUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(add),
       exhaustMap((action) =>
         this.service.create(action.userNew).pipe(
-          map((usersNew) => addSuccess({ usersNew })),
+          map((userNew) => addSuccess({ userNew })),
           catchError((error) =>
             error.status == 400
               ? of(setErrors({ userForm: action.userNew, errors: error.error }))
-              : of(error)
+              : of(error)  
           )
         )
       )
@@ -134,10 +135,11 @@ export class UsersEffects {
       ),
     { dispatch: false }
   );
-
   constructor(
-    private router: Router,
     private actions$: Actions,
-    private service: UserService
-  ) {}
+    private service: UserService,
+    private router: Router    
+  ) { 
+  }
+ 
 }

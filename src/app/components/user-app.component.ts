@@ -1,6 +1,7 @@
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'user-app',
@@ -9,4 +10,6 @@ import { Component } from '@angular/core';
   templateUrl: './user-app.component.html',
   styleUrls: ['./user-app.component.css']
 })
-export class UserAppComponent {}
+export class UserAppComponent {
+  // constructor(private userService: UserService) {}
+}

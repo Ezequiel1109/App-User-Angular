@@ -27,7 +27,11 @@ export class AuthEffects {
                     this.service.user = loginData
                     return loginSuccess({ login: loginData });
                 }),
-                catchError((error) => of(loginError({error: error.error.message})))
+                catchError((error) => {
+                    console.error('Error:', error);
+                    const errorMessage = error?.message || 'Error desconocido'; 
+                    return of(loginError({ error: errorMessage }));
+                })
         ))
     ));
 
